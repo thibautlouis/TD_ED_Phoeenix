@@ -19,7 +19,7 @@ Omega_Lambda = 1 - Omega_r - Omega_m
 
 z_of_chi = distances.interpolate_z_and_chi(H0, Omega_r, Omega_m, Omega_Lambda)
 
-_, k, P_z_and_k_interp = lensing.get_P_z_and_k_interp()
+_, k, P_z_and_k_interp = lensing.get_P_z_and_k_interp("lcdm")
 
 plt.figure(figsize=(12,8))
 plt.loglog()
@@ -37,10 +37,9 @@ chi_star = distances.comoving_distance(z_star, H0, Omega_r, Omega_m, Omega_Lambd
 
 chi_array = np.linspace(10, chi_star, 100)
 z_array = z_of_chi(chi_array)
-print(z_array)
 dchis = chi_array[1] - chi_array[0]
 
-l_array = np.arange(2, 2500 + 1, dtype=np.float64)
+l_array = np.arange(2, 2000 + 1, dtype=np.float64)
 cl_phi = np.zeros(l_array.shape)
 for i, l in enumerate(l_array):
     k_array = (l + 0.5) / chi_array
@@ -48,7 +47,7 @@ for i, l in enumerate(l_array):
     for z, chi, k in zip(z_array, chi_array, k_array):
         cl_phi[i] += 4 * dchis * P_z_and_k_interp(z, k) * ((chi_star - chi) / (chi ** 2 * chi_star)) ** 2 / k ** 4
     
-fac = (l_array * (l_array + 1)) ** 2 / (2 * np.pi)
+fac = np.sqrt(l_array)*(l_array * (l_array + 1)) ** 2 / (2 * np.pi)
 
 compare_with_camb = True
 if compare_with_camb == True:
@@ -60,13 +59,20 @@ if compare_with_camb == True:
     pars.set_for_lmax(2500,lens_potential_accuracy=2)
     results = camb.get_results(pars)
     cl_camb=results.get_lens_potential_cls(2500)
-    plt.loglog(np.arange(2, cl_camb[:,0].size), cl_camb[2:,0], color='r')
+    ell_camb = np.arange(2, cl_camb[:,0].size)
+    #plt.plot(cl_camb[2:,0]*np.sqrt(ell_camb), color='r')
 
 
 #plt.loglog(l_array, cl_phi * fac, color='b')
-plt.xlim([1,2000])
+plt.figure(figsize=(12,8))
+plt.xlim([10,2000])
+plt.semilogx()
+lb, cb, sigma_b = np.loadtxt("data/result_act.dat", unpack=True)
+plt.errorbar(lb, cb, sigma_b, fmt=".",color="red")
+plt.plot(l_array, cl_phi * fac, color="black")
+plt.xlabel(r"$\ell$", fontsize=22)
+plt.ylabel(r"$\ell^{5/2}(\ell+1)^{2}C^{L}_{\ell}/(2\pi)$", fontsize=22)
 
-plt.loglog(l_array, cl_phi * fac, color='g')
 plt.show()
 
 
