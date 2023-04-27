@@ -67,7 +67,7 @@
 
 \maketitle
 
-In April 2023, the Atacama Cosmology Telescope collaboration has released a measurement of a signal dominated lensing map over a quarter of the sky, the goal of this tutorial is to compute 
+In April 2023, the Atacama Cosmology Telescope collaboration has released a measurement of a \href{https://arxiv.org/abs/2304.05203}{signal dominated lensing map} over a quarter of the sky, and its \href{https://arxiv.org/abs/2304.05202}{associated power spectrum}. The goal of this tutorial is to compute 
 the underlying theoretical lensing power spectrum in the $\Lambda$CDM model and compare it to the data.
 
 \begin{figure}[h!]
@@ -303,8 +303,8 @@ def get_P_z_and_k_interp(mode):
     
     Parameters
      ----------
-    H0: float
-        Hubble constant value in km/s/Mpc
+    mode: str
+        either "lcdm" or "baryons_only"
 
     """
 
@@ -315,7 +315,7 @@ def get_P_z_and_k_interp(mode):
     return z_array, k_array, P_z_and_k_interp
 
 \end{lstlisting}
-I have precomputed $k^{2}P_{\psi}(k,z)$   for two modes, 'lcdm' and 'baryons\_only', we will first do the computation with LCDM.
+I have precomputed $k^{2}P_{\psi}(k,z)$   for two modes, 'lcdm' and 'baryons\_only', we will first do the computation with the lcdm mode.
 \item Plot $k^{2}P_{\psi}$  as a function of k at different redshift $z = [0, 0.5, 1, 4 ,20]$
 \item   The integral from $C^{L}_{\ell} $ goes from 0 to the comoving distance to the last scattering surface $\chi_{\rm LSS}$, you can see that it diverges at 0, in reality this doesn't affect the result because it only affect the $\ell =0$ term. However it can lead to numerical instability so instead of doing the integral  $\int^{\chi_{\rm LSS}}_{0}  d\chi_{1}$ we will do $\int^{\chi_{\rm LSS}}_{\chi_{\rm min}}  d\chi_{1}$ with $\chi_{\rm min}=10$.
 
